@@ -67,8 +67,9 @@
           $klant_id = $_SESSION['login'][0];
 
           $commentaar = $_POST['commentaar'];
-          $stmt = DB::conn()->prepare("INSERT INTO `Beoordeling` (restaurant, klant, kwaliteit_eten, ontvangst_en_service, inrichting_en_sfeer, kwaliteit, zou_je_terug_komen, commentaar) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-          $stmt->bind_param('iiiiiiis', $id, $klant_id, $kwal_id, $ontvngst_id, $inricht_id, $kwaliteit_id, $zou_je_id, $commentaar);
+          $cijfer = $_POST['cijfer'];
+          $stmt = DB::conn()->prepare("INSERT INTO `Beoordeling` (restaurant, klant, kwaliteit_eten, ontvangst_en_service, inrichting_en_sfeer, kwaliteit, zou_je_terug_komen, commentaar, cijfer) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+          $stmt->bind_param('iiiiiiisi', $id, $klant_id, $kwal_id, $ontvngst_id, $inricht_id, $kwaliteit_id, $zou_je_id, $commentaar, $cijfer);
           $stmt->execute();
           $stmt->close();
 
@@ -126,6 +127,10 @@
             <h2 class="titel">COMMENTAAR</h2>
             <input type="text" name="commentaar" class="form-control" autocomplete="off" required>
 
+            <h2 class="titel">CIJFER (1 t/m 10)</h2>
+            <input type="number" name="cijfer" min="1" max="10" class="form-control">
+            <br><br>
+
             <input type="submit" value="VERSTUUR" class="btn form_knop">
           </form>
           </div>
@@ -151,10 +156,10 @@
             <?php
 
             foreach($beoordelingen as $b){
-              $stmt = DB::conn()->prepare("SELECT klant, kwaliteit_eten, ontvangst_en_service, inrichting_en_sfeer, kwaliteit, zou_je_terug_komen, commentaar FROM Beoordeling WHERE id=?");
+              $stmt = DB::conn()->prepare("SELECT klant, kwaliteit_eten, ontvangst_en_service, inrichting_en_sfeer, kwaliteit, zou_je_terug_komen, commentaar, cijfer FROM Beoordeling WHERE id=?");
               $stmt->bind_param('i', $b);
               $stmt->execute();
-              $stmt->bind_result($klant, $kwaliteit_eten, $ontvangst_en_service, $inrichting_en_sfeer, $kwaliteit, $zou_je_terug_komen, $commentr);
+              $stmt->bind_result($klant, $kwaliteit_eten, $ontvangst_en_service, $inrichting_en_sfeer, $kwaliteit, $zou_je_terug_komen, $commentr, $cfr);
               $stmt->fetch();
               $stmt->close();
 
@@ -312,6 +317,10 @@
                 <div class="onderdeel">
                   <h3>Commentaar</h3>
                   <p>" <?php echo $commentr ?> "</p>
+                </div>
+                <div class="onderdeel">
+                  <h3>Cijfer</h3>
+                  <p><?php echo $cfr ?></p>
                 </div>
                 </div>
               </div>
