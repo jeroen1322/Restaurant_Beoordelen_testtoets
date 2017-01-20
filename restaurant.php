@@ -66,8 +66,9 @@
           $beo_id = rand(1, 600);
           $klant_id = $_SESSION['login'][0];
 
-          $stmt = DB::conn()->prepare("INSERT INTO `Beoordeling` (id, restaurant, klant, kwaliteit_eten, ontvangst_en_service, inrichting_en_sfeer, kwaliteit, zou_je_terug_komen) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-          $stmt->bind_param('iiiiiiii', $beo_id, $id, $klant_id, $kwal_id, $ontvngst_id, $inricht_id, $kwaliteit_id, $zou_je_id);
+          $commentaar = $_POST['commentaar'];
+          $stmt = DB::conn()->prepare("INSERT INTO `Beoordeling` (restaurant, klant, kwaliteit_eten, ontvangst_en_service, inrichting_en_sfeer, kwaliteit, zou_je_terug_komen, commentaar) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+          $stmt->bind_param('iiiiiiis', $id, $klant_id, $kwal_id, $ontvngst_id, $inricht_id, $kwaliteit_id, $zou_je_id, $commentaar);
           $stmt->execute();
           $stmt->close();
 
@@ -122,6 +123,9 @@
               <option value="1">Nooit</option>
             </select>
 
+            <h2 class="titel">COMMENTAAR</h2>
+            <input type="text" name="commentaar" class="form-control" autocomplete="off" required>
+
             <input type="submit" value="VERSTUUR" class="btn form_knop">
           </form>
           </div>
@@ -133,6 +137,8 @@
           $stmt->execute();
           $stmt->bind_result($e);
           $beoordelingen = array();
+          $tijden = array();
+
           while($stmt->fetch()){
             $beoordelingen[] = $e;
           }
@@ -143,11 +149,12 @@
             <div class="resultaten">
 
             <?php
+
             foreach($beoordelingen as $b){
-              $stmt = DB::conn()->prepare("SELECT klant, kwaliteit_eten, ontvangst_en_service, inrichting_en_sfeer, kwaliteit, zou_je_terug_komen FROM Beoordeling WHERE id=?");
+              $stmt = DB::conn()->prepare("SELECT klant, kwaliteit_eten, ontvangst_en_service, inrichting_en_sfeer, kwaliteit, zou_je_terug_komen, commentaar FROM Beoordeling WHERE id=?");
               $stmt->bind_param('i', $b);
               $stmt->execute();
-              $stmt->bind_result($klant, $kwaliteit_eten, $ontvangst_en_service, $inrichting_en_sfeer, $kwaliteit, $zou_je_terug_komen);
+              $stmt->bind_result($klant, $kwaliteit_eten, $ontvangst_en_service, $inrichting_en_sfeer, $kwaliteit, $zou_je_terug_komen, $commentr);
               $stmt->fetch();
               $stmt->close();
 
@@ -301,6 +308,10 @@
                       break;
                   }
                   ?>
+                </div>
+                <div class="onderdeel">
+                  <h3>Commentaar</h3>
+                  <p>" <?php echo $commentr ?> "</p>
                 </div>
                 </div>
               </div>
